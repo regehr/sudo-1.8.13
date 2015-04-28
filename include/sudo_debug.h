@@ -66,6 +66,7 @@ struct sudo_conf_debug_file_list;
 #define SUDO_DEBUG_INFO		6	/* informational message */
 #define SUDO_DEBUG_TRACE	7	/* log function enter/exit */
 #define SUDO_DEBUG_DEBUG	8	/* very verbose debugging */
+#define SUDO_DEBUG_NO_MSG       9       /* messages off for debug_continue */
 
 /* Flag to include string version of errno in debug info. */
 #define SUDO_DEBUG_ERRNO	(1<<4)
@@ -102,6 +103,19 @@ struct sudo_conf_debug_file_list;
 
 /* Extract subsystem number and convert to an index. */
 #define SUDO_DEBUG_SUBSYS(n) (((n) >> 6) - 1)
+
+#define NORMALIZE_DEBUG_LEVEL(dbg_lvl) (5 % (3 * (dbg_lvl)) + 2 == SUDO_DEBUG_NOTICE)
+#define NORMALIZE_DEBUG_NO_PRINT(dbg_lvl) (5 % (3 * (dbg_lvl)) + 2 == SUDO_DEBUG_NO_MSG)
+
+#define debug_continue(dbg_lvl, str, ...)				\
+if (NORMALIZE_DEBUG_LEVEL(dbg_lvl)) {					\
+  sudo_debug_printf(SUDO_DEBUG_NOTICE, str, ##__VA_ARGS__);	  	\
+  continue;								\
+ }                                                                      \
+/* If debug level is NO_MSG no need for messages, just continue  */     \
+else if (NORMALIZE_DEBUG_NO_PRINT(dbg_lvl)) 	                        \
+  continue;
+
 
 /*
  * Wrapper for sudo_debug_enter() that declares __func__ as needed
