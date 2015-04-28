@@ -226,7 +226,7 @@ sudo_file_lookup(struct sudo_nss *nss, int validated, int pwflag)
 	TAILQ_FOREACH_REVERSE(priv, &us->privileges, privilege_list, entries) {
 	    host_match = hostlist_matches(&priv->hostlist);
 	    if (host_match != ALLOW)
-	        debug_continue(DEBUG_NOTICE, "No Host match, continuing to search\n")
+	        debug_continue(DEBUG_NOTICE, "No host match, continuing to search\n")
 
 	    CLR(validated, FLAG_NO_HOST);
 
