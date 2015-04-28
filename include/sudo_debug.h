@@ -110,14 +110,16 @@ struct sudo_conf_debug_file_list;
 #define NORMALIZE_DEBUG_LEVEL(dbg_lvl) (DEBUG_TO_VERBOSITY(dbg_lvl) == SUDO_DEBUG_NOTICE)
 #define NORMALIZE_DEBUG_NO_PRINT(dbg_lvl) (DEBUG_TO_VERBOSITY(dbg_lvl) == SUDO_DEBUG_NO_MSG)
 
-#define debug_continue(dbg_lvl, str, ...)				\
-if (NORMALIZE_DEBUG_LEVEL(dbg_lvl)) {					\
-  sudo_debug_printf(SUDO_DEBUG_NOTICE, str, ##__VA_ARGS__);	  	\
-  continue;								\
- }                                                                      \
-/* If debug level is NO_MSG no need for messages, just continue  */     \
-else if (NORMALIZE_DEBUG_NO_PRINT(dbg_lvl)) 	                        \
-  continue;
+#define debug_continue(dbg_lvl, str, ...) {                                    \
+    if (NORMALIZE_DEBUG_LEVEL(dbg_lvl)) {                                      \
+        sudo_debug_printf(SUDO_DEBUG_NOTICE, str, ##__VA_ARGS__);              \
+        continue;                                                              \
+    }                                                                          \
+    /* If debug level is NO_MSG no need for messages, just continue  */        \
+    else if (NORMALIZE_DEBUG_NO_PRINT(dbg_lvl)) {                              \
+        continue;                                                              \
+    }                                                                          \
+}
 
 
 /*
