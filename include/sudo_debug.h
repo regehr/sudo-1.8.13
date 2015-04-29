@@ -112,7 +112,6 @@ struct sudo_conf_debug_file_list;
 #define debug_continue(condition, dbg_lvl, str, ...) {			       \
     if (NORMALIZE_DEBUG_LEVEL(dbg_lvl) && condition) {                         \
         sudo_debug_printf(SUDO_DEBUG_NOTICE, str, ##__VA_ARGS__);              \
-	printf("we continued, this is bad\n");				       \
         continue;                                                              \
     }                                                                          \
 }
