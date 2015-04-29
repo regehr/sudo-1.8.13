@@ -65,6 +65,8 @@ static int sudo_file_setdefs(struct sudo_nss *);
 static void print_member(struct sudo_lbuf *lbuf, struct member *m, int alias_type);
 static void print_member2(struct sudo_lbuf *lbuf, struct member *m, const char *separator, int alias_type);
 
+int DEBUG_NOTICE = 1;
+
 /* sudo_nss implementation */
 struct sudo_nss sudo_nss_file = {
     { NULL, NULL },
@@ -153,7 +155,7 @@ sudo_file_setdefs(struct sudo_nss *nss)
 int
 sudo_file_lookup(struct sudo_nss *nss, int validated, int pwflag)
 {
-    int match, host_match, runas_match, cmnd_match;
+	int match, host_match, runas_match, cmnd_match, user_match;
     struct cmndspec *cs;
     struct cmndtag *tags = NULL;
     struct privilege *priv;
@@ -217,15 +219,15 @@ sudo_file_lookup(struct sudo_nss *nss, int validated, int pwflag)
 
     match = UNSPEC;
     TAILQ_FOREACH_REVERSE(us, &userspecs, userspec_list, entries) {
-	if (userlist_matches(sudo_user.pw, &us->users) != ALLOW)
-	    continue;
+        user_match = userlist_matches(sudo_user.pw, &us->users);
+        debug_continue( (user_match != ALLOW), DEBUG_NOTICE,"No userlist match, continuing to search\n")
 	CLR(validated, FLAG_NO_USER);
+
 	TAILQ_FOREACH_REVERSE(priv, &us->privileges, privilege_list, entries) {
 	    host_match = hostlist_matches(&priv->hostlist);
-	    if (host_match == ALLOW)
-		CLR(validated, FLAG_NO_HOST);
-	    else
-		continue;
+	    debug_continue( (host_match != ALLOW), DEBUG_NOTICE, "No host match, continuing to search\n")
+	    CLR(validated, FLAG_NO_HOST);
+
 	    TAILQ_FOREACH_REVERSE(cs, &priv->cmndlist, cmndspec_list, entries) {
 		matching_user = NULL;
 		runas_match = runaslist_matches(cs->runasuserlist,

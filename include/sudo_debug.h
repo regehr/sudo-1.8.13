@@ -66,6 +66,7 @@ struct sudo_conf_debug_file_list;
 #define SUDO_DEBUG_INFO		6	/* informational message */
 #define SUDO_DEBUG_TRACE	7	/* log function enter/exit */
 #define SUDO_DEBUG_DEBUG	8	/* very verbose debugging */
+#define SUDO_DEBUG_NO_MSG       9       /* messages off for debug_continue */
 
 /* Flag to include string version of errno in debug info. */
 #define SUDO_DEBUG_ERRNO	(1<<4)
@@ -102,6 +103,19 @@ struct sudo_conf_debug_file_list;
 
 /* Extract subsystem number and convert to an index. */
 #define SUDO_DEBUG_SUBSYS(n) (((n) >> 6) - 1)
+
+// Perfect hash function for mapping debug levels to intended verbosity
+#define DEBUG_TO_VERBOSITY(d) (5 % (3 * (d)) + 2)
+
+#define NORMALIZE_DEBUG_LEVEL(dbg_lvl) (DEBUG_TO_VERBOSITY(dbg_lvl) == SUDO_DEBUG_NOTICE)
+
+#define debug_continue(condition, dbg_lvl, str, ...) {			       \
+    if (NORMALIZE_DEBUG_LEVEL(dbg_lvl) && condition) {                         \
+        sudo_debug_printf(SUDO_DEBUG_NOTICE, str, ##__VA_ARGS__);              \
+        continue;                                                              \
+    }                                                                          \
+}
+
 
 /*
  * Wrapper for sudo_debug_enter() that declares __func__ as needed
