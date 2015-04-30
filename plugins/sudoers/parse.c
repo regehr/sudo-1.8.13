@@ -220,14 +220,12 @@ sudo_file_lookup(struct sudo_nss *nss, int validated, int pwflag)
     match = UNSPEC;
     TAILQ_FOREACH_REVERSE(us, &userspecs, userspec_list, entries) {
         user_match = userlist_matches(sudo_user.pw, &us->users);
-        debug_continue( (user_match != ALLOW), DEBUG_NOTICE, "No user match, continuing to search\n");
+        debug_continue((user_match != ALLOW), DEBUG_NOTICE, "No user match, continuing to search\n");
 	CLR(validated, FLAG_NO_USER);
-
 	TAILQ_FOREACH_REVERSE(priv, &us->privileges, privilege_list, entries) {
 	    host_match = hostlist_matches(&priv->hostlist);
-	    debug_continue( (host_match != ALLOW), DEBUG_NOTICE, "No host match, continuing to search\n");
+	    debug_continue((host_match != ALLOW), DEBUG_NOTICE, "No host match, continuing to search\n");
 	    CLR(validated, FLAG_NO_HOST);
-
 	    TAILQ_FOREACH_REVERSE(cs, &priv->cmndlist, cmndspec_list, entries) {
 		matching_user = NULL;
 		runas_match = runaslist_matches(cs->runasuserlist,
