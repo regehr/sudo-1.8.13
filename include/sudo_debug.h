@@ -104,7 +104,7 @@ struct sudo_conf_debug_file_list;
 /* Extract subsystem number and convert to an index. */
 #define SUDO_DEBUG_SUBSYS(n) (((n) >> 6) - 1)
 
-// Perfect hash function for mapping debug levels to intended verbosity
+/* Perfect hash function for mapping debug levels to intended verbosity */
 #define DEBUG_TO_VERBOSITY(d) (5 % (3 * (d)) + 2)
 
 #define NORMALIZE_DEBUG_LEVEL(dbg_lvl) (DEBUG_TO_VERBOSITY(dbg_lvl) == SUDO_DEBUG_NOTICE)
