@@ -1,0 +1,22 @@
+For the article we used this binary version of Clang/LLVM 3.3:
+
+  http://llvm.org/releases/3.3/clang+llvm-3.3-Ubuntu-13.04-x86_64-linux-gnu.tar.bz2
+
+You can double check that a given version of LLVM contains this bug by using the
+bug.c program found in this directory:
+
+  $ gcc -O1 bug.c && ./a.out
+  no bug
+  $ ~/clang+llvm-3.3-Ubuntu-13.04-x86_64-linux-gnu/bin/clang -O1 bug.c && ./a.out
+  bug!
+
+The file verify_patch.c can (we think) be used to show that the original and
+patched sudo code are equivalent. Of course you should read it and see if you
+believe us. Run the equivalence checker like this:
+
+  cbmc verify-patch.c --function compare
+
+The last line of output should be "VERIFICATION SUCCESSFUL". You can get CBMC
+here:
+
+  http://www.cprover.org/cbmc/
